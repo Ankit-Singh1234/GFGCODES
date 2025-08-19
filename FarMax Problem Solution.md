@@ -1,5 +1,84 @@
 # FarMax Problem Solution
 
+
+🔎 The problem again
+
+We want, for each index i, the farthest index j > i such that arr[j] > arr[i].
+
+Brute force would be:
+
+Fix i, scan rightward until the end.
+
+Pick the farthest j.
+👉 This is O(n²).
+
+So the natural thought:
+➡️ "Can I preprocess something so I don’t have to re-scan every time?"
+
+✨ Step 1: Observe the condition
+
+We need:
+arr[j] > arr[i] for some j > i.
+
+Instead of checking every j, notice:
+
+If there exists at least one element greater than arr[i] in [k..n-1], then any j ≥ k could work.
+
+So we only need to know whether the maximum in [k..n-1] is greater than arr[i].
+
+This gives the idea of a suffix maximum array.
+
+✨ Step 2: Define what helps quickly
+
+If we precompute:
+
+suffixMax[j] = maximum of arr[j...n-1]
+
+
+Then:
+
+To check if a valid j exists in [mid..n-1],
+we just ask: is suffixMax[mid] > arr[i]?
+
+This reduces a whole subarray scan into O(1).
+So we can now binary search to find the farthest such j.
+
+✨ Step 3: General Pattern
+
+This suffix trick comes up in many problems:
+
+Next greater element / farthest greater element → use suffixMax.
+
+Next smaller element / farthest smaller element → use suffixMin.
+
+Range queries (min/max/sum) → preprocess suffix/prefix arrays (or segment trees).
+
+So the mental model is:
+
+"I need to check some property (greater/smaller) in a range to the right. Instead of re-checking every time, can I preprocess the right side using suffix arrays?"
+
+✅ How it clicks in practice
+
+Try brute force first (O(n²)).
+
+Notice repeated scanning of right side → inefficiency.
+
+Ask yourself: "What one number summarizes this right subarray?"
+
+For max condition → store suffix maximum.
+
+For min condition → store suffix minimum.
+
+For sums → store suffix sum.
+
+Once you have that precomputed, binary search or two-pointers usually follow naturally.
+
+👉 So suffixMax comes to mind because:
+
+We are repeatedly asking about the right side of i.
+
+"Maximum in the right side" is exactly the summary that answers whether a greater element exists.
+
 ## 🔎 Problem Statement
 Given an array `arr` of size `n`, for each index `i` we want to find the **farthest index `j > i` such that `arr[j] > arr[i]`**.  
 If no such index exists, return `-1` for that `i`.
